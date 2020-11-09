@@ -1,1 +1,1 @@
-# mini-projeto-MongoDB-Banco-de-Dados2--Banco-de-Dados-2
+# Mini projeto Node.js Banco NOSQL MongDB e PostgreSQL - Banco de Dados 2
