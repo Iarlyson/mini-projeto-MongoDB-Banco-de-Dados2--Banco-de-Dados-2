@@ -11,7 +11,7 @@ client.connect(
 
 exports.criarpedido =  async (req, res) => {
     const id = parseInt(req.params.id);
-    const {produto, preco} = parseInt(req.body);
+    const {produto, preco} = req.body;
    
     const produtos = {
         cliente: id,
@@ -33,24 +33,19 @@ exports.listapedidosdecliente =  async (req, res) => {
     const id = parseInt(req.params.id);
     const pedidos = client.db(`${process.env.MONGO_DATABASE}`).collection('pedidos');
     const filter = { cliente: id  };
-    const resultado = pedidos.find(filter).forEach();
-    res.status(200).send(resultado);
+    let listadePedidos = []
+    await pedidos.find(filter).forEach( (item) => listadePedidos.push(item));
+        res.status(200).send({listadePedidos});
 }
 
 
 exports.listapedidosdeproduto =  async (req, res) => {
     const id = parseInt(req.params.id);
-
-    try {
-        await client.connect();
-      const pessoas = client.db(`${process.env.MONGO_DATABASE}`).collection('pessoa');
-
-       //const filter = { idade: { $gt: 20 } };
-       await pessoas.find().forEach(p => console.log(p));
-   } finally {
-       await client.close();
-   }
-    
+    const pedidos = client.db(`${process.env.MONGO_DATABASE}`).collection('pedidos');
+    const filter = { produto: id  };
+    let listadePedidos = []
+    await pedidos.find(filter).forEach( (item) => listadePedidos.push(item));
+        res.status(200).send({listadePedidos});
 }
 
 
