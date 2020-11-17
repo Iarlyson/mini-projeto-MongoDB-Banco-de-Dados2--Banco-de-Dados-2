@@ -12,32 +12,35 @@ client.connect(
 exports.criarpedido =  async (req, res) => {
     const id = parseInt(req.params.id);
     const {produto, preco} = req.body;
-   
     const produtos = {
         cliente: id,
         dataehora: new Date(),
         produto: produto,
         preco: preco
     };
-        const pedidos = client.db(`${process.env.MONGO_DATABASE}`).collection('pedidos');
-        pedidos.insertOne(produtos).then(
+
+    const pedidos = client.db(`${process.env.MONGO_DATABASE}`).collection('pedidos');
+    pedidos.insertOne(produtos).then(
     
     res.status(201).send({
-        message: "Usuário novo Cadastrado",
+        message: "Produto novo Cadastrado",
         body: {
         },
     }));
 }
+    
 
+//Lista de pedidos de um cliente
 exports.listapedidosdecliente =  async (req, res) => {
     const id = parseInt(req.params.id);
     const pedidos = client.db(`${process.env.MONGO_DATABASE}`).collection('pedidos');
     const filter = { cliente: id  };
     let listadePedidos = []
     await pedidos.find(filter).forEach( (item) => listadePedidos.push(item));
-        res.status(200).send({listadePedidos});
+    res.status(200).send({listadePedidos});
 }
 
+//Lista de pedidos de clientes que tem determinado produto 
 
 exports.listapedidosdeproduto =  async (req, res) => {
     const id = parseInt(req.params.id);
