@@ -4,22 +4,49 @@ const { MongoClient } = require('mongodb');
 const client = new MongoClient(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}`,
     { useUnifiedTopology: true });
 
-client.on("connect", () => {
-        console.log("Base de Dados no Mongodb nosql conectado com sucesso!!");
-});
+client.connect(
+        console.log("Base de Dados no Mongodb nosql conectado com sucesso!!")
+);
     
 
+exports.criarpedido =  async (req, res) => {
+    const id = parseInt(req.params.id);
+    const {produto, preco} = parseInt(req.body);
+   
+    const produtos = {
+        cliente: id,
+        dataehora: new Date(),
+        produto: produto,
+        preco: preco
+    };
+        const pedidos = client.db(`${process.env.MONGO_DATABASE}`).collection('pedidos');
+        pedidos.insertOne(produtos).then(
+    
+    res.status(201).send({
+        message: "Usuário novo Cadastrado",
+        body: {
+        },
+    }));
+}
 
 exports.listapedidosdecliente =  async (req, res) => {
     const id = parseInt(req.params.id);
-    console.log(id);
+    const pedidos = client.db(`${process.env.MONGO_DATABASE}`).collection('pedidos');
+    const filter = { cliente: id  };
+    const resultado = pedidos.find(filter).forEach();
+    res.status(200).send(resultado);
+}
+
+
+exports.listapedidosdeproduto =  async (req, res) => {
+    const id = parseInt(req.params.id);
 
     try {
         await client.connect();
-      const pedidos = client.db(`${process.env.MONGO_DATABASE}`).collection('pedidos');
+      const pessoas = client.db(`${process.env.MONGO_DATABASE}`).collection('pessoa');
 
        //const filter = { idade: { $gt: 20 } };
-       await pedidos.find().forEach(p => console.log(p));
+       await pessoas.find().forEach(p => console.log(p));
    } finally {
        await client.close();
    }
@@ -27,42 +54,10 @@ exports.listapedidosdecliente =  async (req, res) => {
 }
 
 
-//exports.listapedidosdepedidos =  async (req, res) => {
-//    const id = parseInt(req.params.id);
-//    console.log(id);
-//
+//exports.atualizarPedido =  async (req, res) => {
 //    try {
 //        await client.connect();
-//      const pessoas = client.db(`${process.env.MONGO_DATABASE}`).collection('pessoa');
-//
-//       //const filter = { idade: { $gt: 20 } };
-//       await pessoas.find().forEach(p => console.log(p));
-//   } finally {
-//       await client.close();
-//   }
-//    
 //}
-
-exports.criarpedido =  async (req, res) => {
-    const id = parseInt(req.params.id);
-    const {idProduto, preco, datahora } = req.body;
-    const produtos = {
-        
-        idcCliente: id,
-
-    };
-
-    try {
-        await client.connect();
-        const pedidos = client.db(`${process.env.MONGO_DATABASE}`).collection('pedidos');
-        await pedidos.insertOne(produtos).then(console.log('INSERIDO!'));
-    } finally {
-        await client.close();
-    }
-    //exports.atualizarPedido =  async (req, res) => {
-//    try {
-    //        await client.connect();
-}
 //        const pessoas = client.db(`${process.env.MONGO_DATABASE}`).collection('pessoa');
 //
 
@@ -75,7 +70,9 @@ exports.criarpedido =  async (req, res) => {
 
 
 
-//async function deletePessoa(filter){//    try{//        await client.connect();
+//async function deletePessoa(filter){
+//    try{
+//   await client.connect();
 
 //        const pessoas = client.db(`${process.env.MONGO_DATABASE}`).collection('pessoa');
 //
